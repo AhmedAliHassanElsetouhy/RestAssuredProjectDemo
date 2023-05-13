@@ -13,5 +13,6 @@ public class ValidationData {
     public static final String SHORT_STRING_FORMAT = "A";
     public static final String SPECIAL_CHAR = "!#@#@$$!%@^&@*@*(@";
     public static final String SQL_INJECTION_SPECIAL_CHARS = "='+;--??{}";
-    public static final String SPACE_Value = "   ";
+    public static final String SPACE_VALUE = "   ";
+    public static final String NUMERIC_VALUE = "123456";
 }
