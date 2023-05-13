@@ -3,6 +3,7 @@ package com.qacart.todo.testcases;
 import com.qacart.todo.apis.UserApi;
 import com.qacart.todo.data.ErrorMessages;
 import com.qacart.todo.data.Route;
+import com.qacart.todo.data.ValidationData;
 import com.qacart.todo.models.User;
 import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Feature;
@@ -120,7 +121,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register With Empty FirstName")
     public void shouldNotBeAbleToRegisterWithEmptyFirstName() {
         User user = UserSteps.generateUser();
-        User registerData = new User("", user.getLastName(), user.getEmail(), user.getPassword());
+        User registerData = new User(ValidationData.EMPTY, user.getLastName(), user.getEmail(), user.getPassword());
         Response response = UserApi.register(registerData);
         Error returnedError = response.getBody().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -131,7 +132,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register With Empty LastName")
     public void shouldNotBeAbleToRegisterWithEmptyLastName() {
         User user = UserSteps.generateUser();
-        User registerData = new User(user.getFirstName(), "", user.getEmail(), user.getPassword());
+        User registerData = new User(user.getFirstName(), ValidationData.EMPTY, user.getEmail(), user.getPassword());
         Response response = UserApi.register(registerData);
         Error returnedError = response.getBody().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -142,7 +143,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register With Empty Email")
     public void shouldNotBeAbleToRegisterWithEmptyEmail(){
         User user = UserSteps.generateUser();
-        User registerData = new User(user.getFirstName(), user.getLastName(), "", user.getPassword());
+        User registerData = new User(user.getFirstName(), user.getLastName(), ValidationData.EMPTY, user.getPassword());
         Response response = UserApi.register(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -153,7 +154,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register With Invalid Email")
     public void shouldNotBeAbleToRegisterWithInvalidEmail(){
         User user = UserSteps.generateUser();
-        User registerData = new User(user.getFirstName(), user.getLastName(), "a", user.getPassword());
+        User registerData = new User(user.getFirstName(), user.getLastName(), ValidationData.INVALID_EMAIL_FORMAT, user.getPassword());
         Response response = UserApi.register(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -164,7 +165,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register With Empty Password")
     public void shouldNotBeAbleToRegisterWithEmptyPassword(){
         User user = UserSteps.generateUser();
-        User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), "");
+        User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), ValidationData.EMPTY);
         Response response = UserApi.register(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -175,7 +176,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register With Invalid Password Length")
     public void shouldNotBeAbleToRegisterWithInvalidPasswordLength(){
         User user = UserSteps.generateUser();
-        User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), "a");
+        User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), ValidationData.INVALID_PASSWORD_LENGTH);
         Response response = UserApi.register(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -197,7 +198,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login Using InValid Data")
     public void shouldNotBeAbleToLoginUsingInValidData(){
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User("a", "a");
+        User loggenInUser = new User(ValidationData.INVALID_EMAIL_FORMAT, ValidationData.INVALID_PASSWORD_LENGTH);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -208,7 +209,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login Using Invalid Email And Valid Password")
     public void shouldNotBeAbleToLoginUsingInvalidEmailAndValidPassword() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User("a", user.getPassword());
+        User loggenInUser = new User(ValidationData.INVALID_EMAIL_FORMAT, user.getPassword());
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -219,7 +220,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login Using Empty Email")
     public void shouldNotBeAbleToLoginUsingEmptyEmail(){
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User("", user.getPassword());
+        User loggenInUser = new User(ValidationData.EMPTY, user.getPassword());
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -241,7 +242,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login Using Invalid Password And Valid Email")
     public void shouldNotBeAbleToLoginUsingInvalidPasswordAndValidEmail() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User(user.getEmail(), "a");
+        User loggenInUser = new User(user.getEmail(), ValidationData.INVALID_PASSWORD_LENGTH);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -252,7 +253,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login Using Empty Password")
     public void shouldNotBeAbleToLoginUsingEmptyPassword() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User(user.getEmail(), "");
+        User loggenInUser = new User(user.getEmail(), ValidationData.EMPTY);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
@@ -274,7 +275,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login With MaleWare Input")
     public void shouldNotBeAbleToLoginWithMaleWareInput() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User(user.getEmail(), "some<script>maliciousCode</script>name");
+        User loggenInUser = new User(user.getEmail(), ValidationData.MALE_WARE_ATTACK);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
@@ -285,7 +286,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login With XXS Attack Input")
     public void shouldNotBeAbleToLoginWithXSSAttackInput() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User(user.getEmail(), "<script>alert('XSS')</script>");
+        User loggenInUser = new User(user.getEmail(), ValidationData.XSS_ATTACK);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
@@ -296,7 +297,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login With Sql Injection Input")
     public void shouldNotBeAbleToLoginWithSqlInjectionInput() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User(user.getEmail(), "Robert'); DROP TABLE Users;--");
+        User loggenInUser = new User(user.getEmail(), ValidationData.SQL_INJECTION_INPUT_DROP_TABLE);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
@@ -307,7 +308,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Login With Sql Injection Input2")
     public void shouldNotBeAbleToLoginWithSqlInjectionInput2() {
         User user = UserSteps.getRegisteredUser();
-        User loggenInUser = new User(user.getEmail(), "' OR '1'='1");
+        User loggenInUser = new User(user.getEmail(), ValidationData.SQL_INJECTION_INPUT);
         Response response = UserApi.login(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
