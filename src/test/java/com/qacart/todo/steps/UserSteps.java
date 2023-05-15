@@ -2,6 +2,7 @@ package com.qacart.todo.steps;
 
 import com.github.javafaker.Faker;
 import com.qacart.todo.apis.UserApi;
+import com.qacart.todo.models.Todo;
 import com.qacart.todo.models.User;
 import io.restassured.response.Response;
 
@@ -18,13 +19,21 @@ public class UserSteps {
 
     public static User getRegisteredUser(){
         User user = generateUser();
-        UserApi.register(user);
+        UserApi.registerApi(user);
         return user;
     }
 
     public static String getUserToken(){
         User user = generateUser();
-        Response response = UserApi.register(user);
-        return response.body().path("access_token");
+        Response response = UserApi.registerApi(user);
+        User addedUser = response.body().as(User.class);
+        return addedUser.getAccessToken();
+//        return response.body().path("access_token");
+    }
+
+    public static Response login(String token){
+        User user = UserSteps.getRegisteredUser();
+        Response response = UserApi.loginApi(user);
+        return response;
     }
 }

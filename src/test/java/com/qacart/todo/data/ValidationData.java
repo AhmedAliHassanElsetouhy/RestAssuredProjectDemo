@@ -1,5 +1,7 @@
 package com.qacart.todo.data;
 
+import com.github.javafaker.Bool;
+
 public class ValidationData {
 
     public static final String INVALID_EMAIL_FORMAT = "Test";

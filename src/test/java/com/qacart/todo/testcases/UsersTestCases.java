@@ -24,7 +24,7 @@ public class UsersTestCases {
     public void shouldBeAbleToRegister() {
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         User returnedUser = response.getBody().as(User.class);
         assertThat(response.statusCode(), equalTo(201));
         assertThat(returnedUser.getFirstName(), equalTo(user.getFirstName()));
@@ -35,7 +35,7 @@ public class UsersTestCases {
     public void shouldBeAbleToRegisterWithTimeLessThan20Second() {
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         assertThat(TimeUnit.MILLISECONDS.toSeconds(response.time()), lessThan(20L));
     }
 
@@ -43,7 +43,7 @@ public class UsersTestCases {
     @Test(description = "ShouldBeAbleToRegisterUsingHeaderContentTypeApplicationJson")
     public void shouldBeAbleToRegisterUsingHeaderContentTypeApplicationJson(){
         User user = UserSteps.generateUser();
-        Response response = UserApi.register(user);
+        Response response = UserApi.registerApi(user);
         assertThat(response.contentType(), equalTo(Route.CONTENT_TYPE));
     }
 
@@ -51,7 +51,7 @@ public class UsersTestCases {
     @Test(description = "ShouldBeAbleToRegisterAndResponseBodyContainsValue")
     public void shouldBeAbleToRegisterAndResponseBodyContainsValue(){
         User user = UserSteps.generateUser();
-        Response response = UserApi.register(user);
+        Response response = UserApi.registerApi(user);
         assertThat(response.getBody().asString(), not(nullValue()));
     }
 
@@ -59,7 +59,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Send Request Using Wrong Register URL")
     public void ShouldNotBeAbleToSendRequestUsingWrongRegisterURL(){
         User user = UserSteps.generateUser();
-        Response response = UserApi.wrongRegisterURL(user);
+        Response response = UserApi.wrongRegisterApi(user);
         assertThat(response.statusCode(), equalTo(404));
     }
 
@@ -67,7 +67,7 @@ public class UsersTestCases {
     @Test(description = "Should Not Be Able To Register Using Same Email")
     public void shouldNotBeAbleToRegisterUsingSameEmail(){
         User user = UserSteps.getRegisteredUser();
-        Response response = UserApi.register(user);
+        Response response = UserApi.registerApi(user);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(),equalTo(400));
         assertThat(returnedError.getMessage(),equalTo(ErrorMessages.EMAIL_IS_AlREADY_EXISTED));
@@ -78,7 +78,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithoutFirstName() {
         User user = UserSteps.generateUser();
         User registerData = new User(null, user.getLastName(), user.getEmail(), user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.getBody().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.FIRST_NAME_IS_REQUIRED));
@@ -89,7 +89,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithoutLastName() {
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), null, user.getEmail(), user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.getBody().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.LAST_NAME_IS_REQUIRED));
@@ -100,7 +100,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithoutEmail(){
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), null, user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.EMAIL_IS_REQUIRED));
@@ -111,7 +111,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithoutPassword(){
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), null);
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PASSWORD_IS_REQUIRED));
@@ -122,7 +122,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithEmptyFirstName() {
         User user = UserSteps.generateUser();
         User registerData = new User(ValidationData.EMPTY, user.getLastName(), user.getEmail(), user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.getBody().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.FIRST_NAME_NOT_ALLOWED_TO_BE_EMPTY));
@@ -133,7 +133,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithEmptyLastName() {
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), ValidationData.EMPTY, user.getEmail(), user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.getBody().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.LAST_NAME_NOT_ALLOWED_TO_BE_EMPTY));
@@ -144,7 +144,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithEmptyEmail(){
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), ValidationData.EMPTY, user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.EMAIL_NOT_ALLOWED_TO_BE_EMPTY));
@@ -155,7 +155,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithInvalidEmail(){
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), ValidationData.INVALID_EMAIL_FORMAT, user.getPassword());
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.EMAIL_MUST_BE_VALID_EMAIL));
@@ -166,7 +166,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithEmptyPassword(){
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), ValidationData.EMPTY);
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PASSWORD_NOT_ALLOWED_TO_BE_EMPTY));
@@ -177,7 +177,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToRegisterWithInvalidPasswordLength(){
         User user = UserSteps.generateUser();
         User registerData = new User(user.getFirstName(), user.getLastName(), user.getEmail(), ValidationData.INVALID_PASSWORD_LENGTH);
-        Response response = UserApi.register(registerData);
+        Response response = UserApi.registerApi(registerData);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PASSWORD_LENGTH_MUST_BE_AT_LEAST_8_CHARS));
@@ -188,7 +188,7 @@ public class UsersTestCases {
     public void shouldBeAbleToLoginUsingValidData(){
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), user.getPassword());
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         User returnedUser = response.body().as(User.class);
         assertThat(response.statusCode(), equalTo(200));
         assertThat(returnedUser.getFirstName(), equalTo(user.getFirstName()));
@@ -199,7 +199,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginUsingInValidData(){
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(ValidationData.INVALID_EMAIL_FORMAT, ValidationData.INVALID_PASSWORD_LENGTH);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -210,7 +210,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginUsingInvalidEmailAndValidPassword() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(ValidationData.INVALID_EMAIL_FORMAT, user.getPassword());
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -221,7 +221,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginUsingEmptyEmail(){
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(ValidationData.EMPTY, user.getPassword());
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -232,7 +232,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginWithoutEmail() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(null, user.getPassword());
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -243,7 +243,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginUsingInvalidPasswordAndValidEmail() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), ValidationData.INVALID_PASSWORD_LENGTH);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -254,7 +254,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginUsingEmptyPassword() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), ValidationData.EMPTY);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -265,7 +265,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginWithoutPassword() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), null);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(400));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.PLEASE_FILL_CORRECT_PASSWORD));
@@ -276,7 +276,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginWithMaleWareInput() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), ValidationData.MALE_WARE_ATTACK);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.THIS_EMAIL_AND_COMBINATION_IS_NOT_CORRECT));
@@ -287,7 +287,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginWithXSSAttackInput() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), ValidationData.XSS_ATTACK);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.THIS_EMAIL_AND_COMBINATION_IS_NOT_CORRECT));
@@ -298,7 +298,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginWithSqlInjectionInput() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), ValidationData.SQL_INJECTION_INPUT_DROP_TABLE);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.THIS_EMAIL_AND_COMBINATION_IS_NOT_CORRECT));
@@ -309,7 +309,7 @@ public class UsersTestCases {
     public void shouldNotBeAbleToLoginWithSqlInjectionInput2() {
         User user = UserSteps.getRegisteredUser();
         User loggenInUser = new User(user.getEmail(), ValidationData.SQL_INJECTION_INPUT);
-        Response response = UserApi.login(loggenInUser);
+        Response response = UserApi.loginApi(loggenInUser);
         Error returnedError = response.body().as(Error.class);
         assertThat(response.statusCode(), equalTo(401));
         assertThat(returnedError.getMessage(), equalTo(ErrorMessages.THIS_EMAIL_AND_COMBINATION_IS_NOT_CORRECT));

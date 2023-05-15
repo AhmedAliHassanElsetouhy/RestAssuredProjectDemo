@@ -4,13 +4,10 @@ import com.qacart.todo.base.Specs;
 import com.qacart.todo.data.Route;
 import com.qacart.todo.models.User;
 import io.restassured.response.Response;
-
-import java.lang.annotation.Repeatable;
-
 import static io.restassured.RestAssured.*;
 
 public class UserApi {
-    public static Response register(User user){
+    public static Response registerApi(User user){
         return given()
                 .spec(Specs.getRequestSpec())
                 .body(user)
@@ -21,7 +18,7 @@ public class UserApi {
                 .extract().response();
     }
 
-    public static Response wrongRegisterURL(User user){
+    public static Response wrongRegisterApi(User user){
         return given()
                 .spec(Specs.getRequestSpec())
                 .body(user)
@@ -32,13 +29,13 @@ public class UserApi {
                 .extract().response();
     }
 
-    public static Response login(User user){
+    public static Response loginApi(User user){
         return
                 given()
                         .spec(Specs.getRequestSpec())
                         .body(user)
                         .when()
-                        .post(Route.LOGIN_ROUTE)
+                        .put(Route.LOGIN_ROUTE)
                         .then()
                         .log().all()
                         .extract().response();
