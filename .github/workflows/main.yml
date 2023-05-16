@@ -15,7 +15,3 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - run: mvn cleat test
-      - name: Generate Allure report
-        run:
-          allure generate target/allure-results --clean
-          allure report open

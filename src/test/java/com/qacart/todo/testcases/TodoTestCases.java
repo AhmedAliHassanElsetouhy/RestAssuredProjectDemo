@@ -270,7 +270,7 @@ public class TodoTestCases {
 
         String tokenUser2 = UserSteps.getUserToken();
         Todo todoUser2 = TodoSteps.generateTodoTask();
-        String taskIdUser2 = TodoSteps.getTaskId(todoUser2, tokenUser2);
+        //String taskIdUser2 = TodoSteps.getTaskId(todoUser2, tokenUser2);
 
         Response response = TodoApi.deleteTodoApi(tokenUser2, taskIdUser1);
 
