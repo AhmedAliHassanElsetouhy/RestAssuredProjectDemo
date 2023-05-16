@@ -1,12 +1,10 @@
 package com.qacart.todo.testcases;
 
 import com.qacart.todo.apis.TodoApi;
-import com.qacart.todo.apis.UserApi;
 import com.qacart.todo.data.ErrorMessages;
 import com.qacart.todo.data.ValidationData;
 import com.qacart.todo.models.Error;
 import com.qacart.todo.models.Todo;
-import com.qacart.todo.models.User;
 import com.qacart.todo.steps.TodoSteps;
 import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Feature;
@@ -16,7 +14,6 @@ import org.testng.annotations.Test;
 
 
 import java.util.List;
-import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -196,27 +193,87 @@ public class TodoTestCases {
     @Test(description = "Should Be Able To Update Todo Task")
     public void ShouldBeAbleToUpdateTodoTask(){
 //        String token = UserSteps.getUserToken();
-//        Todo todo = TodoSteps.updateTodoTask();
-//        String taskId = TodoSteps.getTaskId(todo, token);
-//        String userId = TodoSteps.getUserID(todo, token);
-//        Todo updatedTodo = new Todo(todo.getIsCompleted(), todo.getItem());
-//        Response response = TodoApi.updateTodoApi(updatedTodo, token, taskId);
-//        assertThat(response.statusCode(), equalTo(200));
-//        Todo returnedTodo = response.body().as(Todo.class);
-//        assertThat(returnedTodo.getIsCompleted(), equalTo(updatedTodo.getIsCompleted()));
-//        assertThat(returnedTodo.getItem(), equalTo(updatedTodo.getItem()));
+//        Todo todo = TodoSteps.generateTodoTask();
+//        Response response1 = TodoApi.AddTodoApi(todo, token);
+//        Todo returnedTodo = response1.body().as(Todo.class);
+//        String taskID = returnedTodo.getId();
+//        String userId = returnedTodo.getUserID();
+//        Todo updatedTodo = new Todo(true, returnedTodo.getItem());
+//        Response response2 = TodoApi.updateTodoApi(updatedTodo, token, taskID);
+//        Todo returnedUpdatedTodo = response2.body().as(Todo.class);
+//        assertThat(response2.statusCode(), equalTo(200));
+//        assertThat(returnedUpdatedTodo.getItem(), equalTo(updatedTodo.getItem()));
+//        assertThat(returnedUpdatedTodo.getIsCompleted(), equalTo(updatedTodo.getIsCompleted()));
 
         String token = UserSteps.getUserToken();
+        Todo todo = TodoSteps.updateTodoTask();
+        String taskId = TodoSteps.getTaskId(todo, token);
+        String userId = TodoSteps.getUserID(todo, token);
+        Todo updatedTodo = new Todo(todo.getIsCompleted(), todo.getItem());
+        Response response = TodoApi.updateTodoApi(updatedTodo, token, taskId);
+        assertThat(response.statusCode(), equalTo(200));
+        Todo returnedTodo = response.body().as(Todo.class);
+        assertThat(returnedTodo.getIsCompleted(), equalTo(updatedTodo.getIsCompleted()));
+        assertThat(returnedTodo.getItem(), equalTo(updatedTodo.getItem()));
+    }
+
+    //Task should be fail if code is correct but User1 update task of User2 and this is wrong
+    // change 200 of last third line to 403 when code is fixed, uncomment last two line of code
+    @Story("Negative Update Todo Task")
+    @Test(description = "Should Not Be Able To Update Todo Task Of Another Token")
+    public void ShouldNotBeAbleToUpdateTodoTaskOfAnotherToken(){
+        String tokenUser1 = UserSteps.getUserToken();
+        Todo todoUser1 = TodoSteps.generateTodoTask();
+        String taskIdUser1 = TodoSteps.getTaskId(todoUser1,tokenUser1);
+        Todo updatedTodoUser1 = new Todo(true, todoUser1.getItem());
+        Response responseUser1 = TodoApi.updateTodoApi(updatedTodoUser1, tokenUser1, taskIdUser1);
+        assertThat(responseUser1.statusCode(), equalTo(200));
+
+        String tokenUser2 = UserSteps.getUserToken();
+        Todo todoUser2 = TodoSteps.generateTodoTask();
+        String taskIdUser2 = TodoSteps.getTaskId(todoUser2, tokenUser2);
+        Todo updatedTodoUser2 = new Todo(true, todoUser2.getItem());
+        Response responseUser2 = TodoApi.updateTodoApi(updatedTodoUser1, tokenUser2, taskIdUser1);
+        assertThat(responseUser2.statusCode(), equalTo(200));
+//        Error returnedErrorUser2 = responseUser2.body().as(Error.class);
+//        assertThat(returnedErrorUser2.getMessage(), equalTo(ErrorMessages.YOU_ARE_FORBIDDEN_TO_ACCESS_THIS_DATA));
+    }
+
+    @Story("Positive Delete Todo Task")
+    @Test(description = "Should Be Able To Delete Todo Task That Belongs To Me")
+    public void ShouldBeAbleToDeleteTodoTaskThatBelongsToMe(){
+        String token = UserSteps.getUserToken();
         Todo todo = TodoSteps.generateTodoTask();
-        Response response1 = TodoApi.AddTodoApi(todo, token);
-        Todo returnedTodo = response1.body().as(Todo.class);
-        String taskID = returnedTodo.getId();
-        String userId = returnedTodo.getUserID();
-        Todo updatedTodo = new Todo(true, returnedTodo.getItem());
-        Response response2 = TodoApi.updateTodoApi(updatedTodo, token, taskID);
-        Todo returnedUpdatedTodo = response2.body().as(Todo.class);
-        assertThat(response2.statusCode(), equalTo(200));
-        assertThat(returnedUpdatedTodo.getItem(), equalTo(updatedTodo.getItem()));
-        assertThat(returnedUpdatedTodo.getIsCompleted(), equalTo(updatedTodo.getIsCompleted()));
+        String taskId = TodoSteps.getTaskId(todo, token);
+        Response response = TodoApi.deleteTodoApi(token, taskId);
+        assertThat(response.statusCode(), equalTo(200));
+    }
+
+    @Story("Positive Delete Todo Task")
+    @Test(description = "Should Be Able To Ensure That Task Is Deleted")
+    public void ShouldBeAbleToEnsureThatTaskIsDeleted(){
+        String token = UserSteps.getUserToken();
+        Todo todo = TodoSteps.generateTodoTask();
+        String taskId = TodoSteps.getTaskId(todo, token);
+        Response response = TodoApi.deleteTodoApi(token, taskId);
+        assertThat(response.statusCode(), equalTo(200));
+        Todo returnedTodo = response.body().as(Todo.class);
+        assertThat(returnedTodo.getId(), equalTo(taskId));
+    }
+
+    @Story("Negative Delete Todo Task")
+    @Test(description = "Should Not Be ABle To Delete Task Of Another User")
+    public void ShouldNotBeABleToDeleteTaskOfAnotherUser(){
+        String tokenUser1 = UserSteps.getUserToken();
+        Todo todoUser1 = TodoSteps.generateTodoTask();
+        String taskIdUser1 = TodoSteps.getTaskId(todoUser1, tokenUser1);
+
+        String tokenUser2 = UserSteps.getUserToken();
+        Todo todoUser2 = TodoSteps.generateTodoTask();
+        String taskIdUser2 = TodoSteps.getTaskId(todoUser2, tokenUser2);
+
+        Response response = TodoApi.deleteTodoApi(tokenUser2, taskIdUser1);
+
+        assertThat(response.statusCode(), equalTo(403));
     }
 }

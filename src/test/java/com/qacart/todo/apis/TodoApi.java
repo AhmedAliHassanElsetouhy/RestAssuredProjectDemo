@@ -53,4 +53,15 @@ public class TodoApi {
                 .log().all()
                 .extract().response();
     }
+
+    public static Response deleteTodoApi(String token, String taskId){
+        return given()
+                .spec(Specs.getRequestSpec())
+                .auth().oauth2(token)
+                .when()
+                .delete(Route.TODO_ROUTE + taskId)
+                .then()
+                .log().all()
+                .extract().response();
+    }
 }
