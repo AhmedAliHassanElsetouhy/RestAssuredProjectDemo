@@ -1,4 +1,4 @@
-name: Run Rest assured test cases
+name: Run Rest Assured Test Cases
 
 on:
   push:
@@ -15,3 +15,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - run: mvn clean test
+
