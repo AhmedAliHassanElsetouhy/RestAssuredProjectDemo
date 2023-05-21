@@ -12,7 +12,6 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           java-version: "16"
-          distribution: 'temurin'
+#          distribution: 'temurin'
           cache: maven
       - run: mvn clean test
-
