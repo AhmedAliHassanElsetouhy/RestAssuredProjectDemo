@@ -12,7 +12,6 @@ import io.qameta.allure.Story;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
-
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
