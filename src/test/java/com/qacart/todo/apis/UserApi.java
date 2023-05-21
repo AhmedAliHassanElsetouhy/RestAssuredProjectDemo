@@ -35,7 +35,7 @@ public class UserApi {
                         .spec(Specs.getRequestSpec())
                         .body(user)
                         .when()
-                        .put(Route.LOGIN_ROUTE)
+                        .post(Route.LOGIN_ROUTE)
                         .then()
                         .log().all()
                         .extract().response();
