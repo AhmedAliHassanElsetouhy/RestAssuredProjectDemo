@@ -15,8 +15,8 @@ jobs:
       - run: mvn clean test
       - name: Generate Allure report
         run:
-            allure generate target/allure-results --clean
-            allure report open
+            allure generate path/to/allure-results --clean && allure open
+
 
 
 #name: Run Rest Assured Test Cases
