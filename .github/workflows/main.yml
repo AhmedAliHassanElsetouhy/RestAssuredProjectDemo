@@ -1,7 +1,7 @@
 name: Run Rest assured test cases
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
 jobs:
   test:
     runs-on: windows-latest
@@ -13,6 +13,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - run: mvn clean test
+      - name: Generate Allure report
+        run:
+            allure generate target/allure-results --clean
+            allure report open
 
 
 #name: Run Rest Assured Test Cases
